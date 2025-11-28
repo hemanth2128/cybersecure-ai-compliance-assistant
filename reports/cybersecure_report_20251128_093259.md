@@ -1,6 +1,6 @@
 # Cybersecurity Compliance Report for SecurePay Fintech
 
-## 0. Overview and Risk Score
+## Overview and Risk Score
 - **Overall Risk Score:** 95 / 100
 - **Posture:** Strong
 

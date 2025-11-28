@@ -1,12 +1,31 @@
- User
-   ↓
- Intake Agent ──→ Memory (Profile)
-   ↓
- Research Agent ──→ Security Standards
-   ↓
- Risk Analysis Agent ──→ Risk Table
-   ↓
- Report Writer Agent (Gemini)
-   ↓
- Evaluation Agent ──→ Save + Output
-
+ ┌───────────┐
+ │   User    │
+ └─────┬─────┘
+       ↓
+ ┌──────────────┐
+ │ Intake Agent │
+ └─────┬────────┘
+       ↓
+ ┌──────────────┐
+ │ Memory Store │
+ └─────┬────────┘
+       ↓
+ ┌───────────────┐
+ │ ResearchAgent │
+ └─────┬─────────┘
+       ↓
+ ┌──────────────────┐
+ │ RiskAnalysisAgent│
+ └──────┬───────────┘
+        ↓
+ ┌──────────────────┐
+ │ReportWriterAgent │
+ └──────┬───────────┘
+        ↓
+ ┌──────────────────┐
+ │EvaluationAgent   │
+ └──────┬───────────┘
+        ↓
+ ┌──────────────────┐
+ │ Final Report     │
+ └──────────────────┘

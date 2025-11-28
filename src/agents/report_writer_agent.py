@@ -1,4 +1,3 @@
-
 # src/agents/report_writer_agent.py
 
 from typing import Any, Dict, List
@@ -11,7 +10,7 @@ from tools.report_save_tool import save_report_to_file
 class ReportWriterAgent:
     """
     Uses Gemini to generate a structured cybersecurity compliance report
-    based on organization profile and risk analysis.
+    based on organization profile, risk analysis, and tone preference.
     """
 
     def __init__(self, memory: SessionMemory, console: Console, client: genai.Client):
@@ -24,12 +23,13 @@ class ReportWriterAgent:
 
         profile: Dict[str, Any] = self.memory.get("org_profile")
         risks: List[Dict[str, Any]] = self.memory.get("risks")
+        risk_score: Dict[str, Any] = self.memory.get("risk_score", {})
 
         if not profile or risks is None:
             self.console.print("[ReportWriterAgent] Missing profile or risk data. Cannot generate report.")
             return
 
-        prompt = self._build_prompt(profile, risks)
+        prompt = self._build_prompt(profile, risks, risk_score)
 
         try:
             response = self.client.models.generate_content(
@@ -47,15 +47,36 @@ class ReportWriterAgent:
             self.console.print("[ReportWriterAgent] Error while generating report:")
             self.console.print(str(e))
 
-    def _build_prompt(self, profile: Dict[str, Any], risks: List[Dict[str, Any]]) -> str:
+    def _build_prompt(
+        self,
+        profile: Dict[str, Any],
+        risks: List[Dict[str, Any]],
+        risk_score: Dict[str, Any]
+    ) -> str:
         org_name = profile.get("organization_name", "Unknown Organization")
+        tone = (profile.get("tone_mode") or "audit").lower()
+
+        tone_instruction = {
+            "audit": "Use precise compliance and audit-style language. Be direct about gaps and controls.",
+            "advisory": "Use a supportive, consulting tone. Focus on guidance and next steps rather than blame.",
+            "executive": "Write in a concise, business-oriented style suitable for executive leadership summaries."
+        }.get(tone, "Use a neutral professional tone.")
+
+        score_value = risk_score.get("score", "N/A")
+        score_status = risk_score.get("status", "Unknown")
 
         prompt = f"""
-You are a cybersecurity and compliance expert.
+You are an experienced cybersecurity and compliance consultant.
 
-Generate a clear, structured cybersecurity compliance assessment report
-for the following organization. Use professional, concise language that
-a security engineer and business leader can both understand.
+Write a cybersecurity compliance assessment report for the organization below.
+
+STYLE / TONE:
+- Tone mode selected by user: {tone}
+- Apply this style: {tone_instruction}
+
+OVERALL RISK SCORE:
+- Numeric score: {score_value} / 100
+- Posture: {score_status}
 
 ORGANIZATION PROFILE:
 - Name: {profile.get('organization_name')}
@@ -67,33 +88,56 @@ ORGANIZATION PROFILE:
 - Regular backups: {profile.get('regular_backups')}
 - Stores personal data: {profile.get('stores_personal_data')}
 
-RISK ANALYSIS INPUT (list of dicts):
+RISK ANALYSIS INPUT (list of dicts with control, status, risk, recommendation):
 {risks}
 
 Now produce the report in the following markdown structure:
 
 # Cybersecurity Compliance Report for {org_name}
 
+## 0. Overview and Risk Score
+- Overall risk score (0-100) and posture label.
+- One short paragraph summarizing the situation in plain language.
+
 ## 1. Executive Summary
-(Brief overview of the security posture and key findings.)
+A short, clear explanation of:
+- The overall security posture
+- The key risks (in business terms)
+- The urgency level, if posture is "Critical"
 
 ## 2. Organization Profile
-(Re-state profile in a concise way.)
+Summarize the profile in a few bullet points.
 
 ## 3. Risk Assessment
-Present a table in markdown:
+Present a table in markdown with the following columns:
 
 | Control | Status | Risk Level | Recommendation |
 
+Populate the table using the risk analysis input.
+
 ## 4. Recommended Improvement Roadmap
 Organize improvements into phases:
-- Phase 1: High priority items
-- Phase 2: Medium priority items
+
+- Phase 1: High priority (immediate actions)
+- Phase 2: Medium priority (short to mid-term)
 - Phase 3: Low priority / optimization
 
-## 5. Additional Notes and Compliance Guidance
-(Include any mapping or references to common frameworks such as ISO 27001, NIST CSF, or SOC 2 where relevant.)
+For each phase, list a few bullet points.
 
-Make sure the report is self-contained and easy to read.
+## 5. Alignment with Common Frameworks
+Briefly map key recommendations to frameworks such as:
+- ISO 27001
+- NIST CSF
+- SOC 2 (Security)
+
+## 6. Additional Notes and Next Steps
+Provide any final advice, including:
+- Suggested order of implementation
+- Advice for small teams or limited budgets
+
+The report should:
+- Be friendly but professional
+- Avoid unnecessary fear-based language
+- Help the reader understand what to do next.
 """
         return prompt

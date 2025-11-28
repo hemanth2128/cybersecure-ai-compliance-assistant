@@ -1,32 +1,43 @@
-
 import os
 from dotenv import load_dotenv
-from google.genai import Client
 from rich.console import Console
+from google import genai  # requires `google-genai` package
+
+
+# Load environment variables from .env
+load_dotenv()
 
 console = Console()
 
-# Load environment variables
-load_dotenv()
 
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+def get_client() -> genai.Client:
+    api_key = os.getenv("GOOGLE_API_KEY")
+    if not api_key:
+        raise RuntimeError(
+            "GOOGLE_API_KEY is not set. Please add it to your .env file."
+        )
 
-if not GOOGLE_API_KEY:
-    raise ValueError("❌ Google API Key missing. Set it inside .env file.")
+    client = genai.Client(api_key=api_key)
+    return client
 
-client = Client(api_key=GOOGLE_API_KEY)
 
 def run_intake_agent():
-    console.print("[bold cyan]🤖 Intake Agent Started...[/bold cyan]")
+    console.print("=== Intake Agent Started ===")
 
+    client = get_client()
+
+    # Simple test prompt just to verify everything works
     response = client.models.generate_content(
         model="gemini-1.5-flash",
-        contents="Hello! Please ask the first question for organization onboarding."
+        contents="You are the intake agent for a cybersecurity compliance assistant. "
+                 "Greet the user in one short sentence."
     )
 
-    console.print(f"[bold green]Agent Response:[/bold green] {response.text}")
+    # Print the model response
+    console.print("Agent Response:")
+    console.print(response.text)
 
 
 if __name__ == "__main__":
-    console.print("[bold yellow]🚀 CyberSecure AI Compliance Assistant (Prototype Run)...[/bold yellow]")
+    console.print("CyberSecure AI Compliance Assistant (Prototype Run)...")
     run_intake_agent()

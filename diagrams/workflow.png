@@ -1,1 +1,2 @@
 
+User → LLM Intake → JSON structured record → Rule Engine → Gemini-based report → Local storage

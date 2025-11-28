@@ -1,4 +1,3 @@
-
 # src/agents/risk_agent.py
 
 from typing import Any, Dict, List
@@ -9,7 +8,7 @@ from memory.session_service import SessionMemory
 class RiskAnalysisAgent:
     """
     Compares organization profile with basic expectations
-    and generates a list of risks.
+    and generates a list of risks and an overall risk score.
     """
 
     def __init__(self, memory: SessionMemory, console: Console):
@@ -34,7 +33,7 @@ class RiskAnalysisAgent:
         regular_backups = self._normalize_answer(profile.get("regular_backups", "unknown"))
         stores_personal_data = self._normalize_answer(profile.get("stores_personal_data", "unknown"))
 
-        # Example rules – you can extend these
+        # Risk rules
         if uses_mfa != "yes":
             risks.append({
                 "control": "Multi-Factor Authentication (MFA)",
@@ -75,5 +74,30 @@ class RiskAnalysisAgent:
                 "recommendation": "Continue monitoring, testing controls, and improving security maturity."
             })
 
+        # NEW: compute numeric risk score
+        score = 100
+        for r in risks:
+            if r["risk"] == "HIGH":
+                score -= 30
+            elif r["risk"] == "MEDIUM":
+                score -= 15
+            else:
+                score -= 5
+
+        if score < 0:
+            score = 0
+
+        if score >= 85:
+            posture = "Strong"
+        elif score >= 60:
+            posture = "Moderate"
+        else:
+            posture = "Critical"
+
+        risk_score = {"score": score, "status": posture}
+
         self.memory.set("risks", risks)
-        self.console.print(f"[RiskAnalysisAgent] Identified {len(risks)} risk items and stored them in memory.")
+        self.memory.set("risk_score", risk_score)
+
+        self.console.print(f"[RiskAnalysisAgent] Identified {len(risks)} risk items.")
+        self.console.print(f"[RiskAnalysisAgent] Overall risk score: {score} / 100 ({posture}).")

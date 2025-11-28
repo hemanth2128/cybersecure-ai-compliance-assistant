@@ -1,22 +1,23 @@
-
 # src/agents/evaluation_agent.py
 
-from typing import Any, Dict, List
+from typing import List
 from rich.console import Console
 from memory.session_service import SessionMemory
 
 
 class EvaluationAgent:
     """
-    Performs a simple structural validation of the generated report.
+    Performs a structural validation of the generated report.
     """
 
     REQUIRED_SECTIONS = [
+        "## 0. Overview and Risk Score",
         "## 1. Executive Summary",
         "## 2. Organization Profile",
         "## 3. Risk Assessment",
         "## 4. Recommended Improvement Roadmap",
-        "## 5. Additional Notes and Compliance Guidance",
+        "## 5. Alignment with Common Frameworks",
+        "## 6. Additional Notes and Next Steps",
     ]
 
     def __init__(self, memory: SessionMemory, console: Console):
@@ -41,6 +42,9 @@ class EvaluationAgent:
             self.console.print("[EvaluationAgent] Report is missing the following sections:")
             for s in missing_sections:
                 self.console.print(f" - {s}")
-            self.console.print("[EvaluationAgent] You can re-run the ReportWriterAgent with adjusted prompts if needed.")
+            self.console.print(
+                "[EvaluationAgent] Despite missing sections, the report is still usable. "
+                "You can refine the prompts in ReportWriterAgent for stricter structure."
+            )
         else:
             self.console.print("[EvaluationAgent] Report structure looks complete.")

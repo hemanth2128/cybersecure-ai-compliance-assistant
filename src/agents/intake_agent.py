@@ -1,4 +1,3 @@
-
 # src/agents/intake_agent.py
 
 from typing import Dict
@@ -10,7 +9,6 @@ from memory.session_service import SessionMemory
 class IntakeAgent:
     """
     Collects organization profile and basic security posture via CLI.
-    In the capstone write-up, you can describe this as the "intake agent".
     """
 
     def __init__(self, memory: SessionMemory, console: Console, client: genai.Client):
@@ -37,6 +35,20 @@ class IntakeAgent:
         profile["encryption_at_rest"] = input("Is sensitive data encrypted at rest? (Yes/No/Unknown): ").strip()
         profile["regular_backups"] = input("Do you have regular backups? (Yes/No/Unknown): ").strip()
         profile["stores_personal_data"] = input("Do you store customer personal data? (Yes/No/Unknown): ").strip()
+
+        # NEW: Tone mode selection
+        self.console.print(
+            "\nChoose report tone style:"
+            "\n  - Audit      (strict, compliance-focused)"
+            "\n  - Advisory   (supportive, improvement-focused)"
+            "\n  - Executive  (short, business-focused)\n"
+        )
+        tone = input("Report tone (Audit/Advisory/Executive): ").strip().lower()
+
+        if tone not in ["audit", "advisory", "executive"]:
+            tone = "audit"  # default
+
+        profile["tone_mode"] = tone
 
         self.memory.set("org_profile", profile)
 

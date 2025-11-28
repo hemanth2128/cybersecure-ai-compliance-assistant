@@ -1,58 +1,152 @@
 # cybersecure-ai-compliance-assistant
 
-🛡 CyberSecure AI Compliance Assistant
+🛡️ CyberSecure AI Compliance Assistant
+Intelligent Multi-Agent System for Automated Cybersecurity Risk & Compliance Reporting
+🚀 Overview
 
-A Multi-Agent Security Compliance & Risk Assessment Assistant using Google AI Agents
+The CyberSecure AI Compliance Assistant is an AI-powered multi-agent system designed to automate cybersecurity posture assessment and generate compliance-aligned reports.
+Using structured inputs, rule-based risk scoring, and an LLM-powered report generator (Gemini 2.5 Flash), this tool produces an actionable compliance report aligned with frameworks such as:
 
-📌 Overview
+ISO 27001
 
-CyberSecure AI Compliance Assistant helps organizations quickly assess their cybersecurity posture and generate lightweight compliance reports based on common standards like ISO 27001, SOC2, and NIST CSF.
+NIST Cybersecurity Framework
 
-This project was built as part of the Google 5-Day AI Agents Intensive Capstone (2025).
+SOC 2 Security Trust Principles
 
-🎯 Problem
+This project was built as part of the Google AI 5-Day Agent Intensive Program (Capstone Project) under the Enterprise Agent track.
 
-Organizations struggle with compliance because documentation and assessment require time, expertise, and manual research.
+🎯 Problem Statement
 
-🚀 Solution
+Cybersecurity compliance assessments are:
 
-A multi-agent AI system that:
+Time-consuming
 
-Collects organization profile information
+Require specialized knowledge
 
-Searches security standard requirements
+Often inconsistent between consultants
 
-Performs basic compliance gap analysis
+Small and mid-sized organizations struggle to perform compliant security posture evaluations without experts — increasing the risk of:
 
-Generates a risk summary
+⚠️ Audit failure
+⚠️ Regulatory penalties
+⚠️ Customer trust damage
 
-Produces a formatted report
+This project aims to solve that.
 
-🧠 Features
-Feature	Included
-Multi-Agent System	✔
-Tools (Search + Custom Save Tool)	✔
-Sessions & Memory	✔
-Observability (Logs & Metrics)	✔
-Agent Evaluation	✔
-Long-Running Operations	✔
-Gemini-powered reasoning	✔
-🧩 Architecture Diagram
+💡 Solution
 
-📍 (Will be added later — placeholder)
+This solution automates the assessment workflow using a multi-agent architecture, providing:
 
-📂 Repo Structure
-(we will paste the folder structure here later once finalized)
+Intake and structured data gathering
 
-🧪 Sample Output (Coming Soon)
-🧭 Future Roadmap
+Context-aware memory and session state
 
-Add UI
+Rule-based security control evaluation
 
-Export as PDF
+AI-generated compliance reporting
 
-Connect to real GRC tools
+Tone-customizable output (Audit / Advisory / Executive)
 
-🧑‍💻 Author
+Numeric cybersecurity posture score
 
-Hemanth Kumar S — Cybersecurity Engineering Student
+📌 Output is saved automatically in /reports/.
+
+🧠 Agent Architecture
+Agent	Function
+Intake Agent	Collects organizational and security data interactively
+Research Agent	Fetches industry standards (static version placeholder)
+Risk Analysis Agent	Applies logic-based scoring and creates risk table
+Report Writer Agent	Uses Gemini to produce formatted compliance report
+Evaluation Agent	Verifies report structure and ensures completeness
+📍 System Flow Diagram
+flowchart TD
+    A(User Input) --> B[Intake Agent]
+    B --> C[(Session Memory)]
+    C --> D[Research Agent]
+    D --> E[Risk Analysis Agent]
+    E --> F[Report Writer Agent → Gemini]
+    F --> G[Evaluation Agent]
+    G --> H[Final Report (.md/PDF)]
+
+
+📄 Final architecture image (PNG) is stored under:
+
+/diagrams/architecture.png
+
+🔍 Key Features
+Feature	Status
+Multi-agent workflow	✔
+Memory state management	✔
+Rule-based risk scoring (0–100)	✔
+Dynamic tone output (Audit / Advisory / Executive)	✔
+Document generator (Markdown)	✔
+Report validation agent	✔
+Persistent file saving system	✔
+🛠️ Technology Stack
+Component	Technology
+Language	Python 3.11+
+AI Model	Gemini 2.5 Flash
+Framework	Google AI Agent Development Kit
+Memory State	JSON session memory
+Output Format	Markdown report (.md)
+📂 Repository Structure
+cybersecure-ai-compliance-assistant/
+│
+├── agents/                       # All agent classes
+├── memory/                       # Session memory system
+├── tools/                        # File save helpers
+├── reports/                      # Generated compliance reports
+├── diagrams/                     # Architecture images
+├── src/main.py                  # Pipeline runner
+├── requirements.txt             # Dependencies
+└── README.md                    # Documentation
+
+▶️ How to Run Locally
+1️⃣ Install dependencies:
+pip install -r requirements.txt
+
+2️⃣ Create .env file:
+GOOGLE_API_KEY=your_api_key_here
+
+3️⃣ Run the assistant:
+python src/main.py
+
+🧪 Example Output
+
+A sample generated report is available under:
+
+/reports/sample_output.md
+
+📈 Future Enhancements
+
+🔄 Auto-retry loop with enhanced evaluation
+
+🧠 Persistent long-term memory database
+
+🕹️ Web UI using Streamlit or React
+
+📤 Deployment via Cloud Run for API integration
+
+📊 Export to PDF & SOC2-style audit format
+
+🏆 Submission Track
+
+📌 Enterprise AI Agents – Google AI Capstone 2025
+Project uses:
+
+Multi-agent design
+
+Context engineering
+
+Tool execution
+
+State/memory management
+
+Evaluation & refinement loop
+
+👤 Author
+
+Name: Hemanth Kumar S
+Role: Cybersecurity Engineering Student
+Track: AI + Cybersecurity Automation
+Submission Category: Enterprise Agents
